@@ -10,17 +10,17 @@ fetch('/gamestore/backend/juegos.php')
     })
     .catch(error => console.error('Error al cargar los datos:', error));
 
-// Función para mostrar la lista de juegos
-function mostrarListaJuegos(juegos) {
-    const juegosDiv = document.getElementById('juegos');
-    juegosDiv.innerHTML = ''; // Limpiar contenido previo
+    // Función para mostrar la lista de juegos
+    function mostrarListaJuegos(juegos) {
+        const juegosDiv = document.getElementById('juegos');
+        juegosDiv.innerHTML = ''; // Limpiar contenido previo
 
-    juegos.forEach(juego => {
-        const juegoDiv = document.createElement('div');
-        juegoDiv.innerHTML = `<h2>${juego.nombre}</h2>`;
-        juegoDiv.onclick = () => obtenerDetallesJuego(juego.id); // Asignar evento de clic
-        juegosDiv.appendChild(juegoDiv);
-    });
+        juegos.forEach(juego => {
+            const juegoDiv = document.createElement('div');
+            juegoDiv.innerHTML = `<h2>${juego.nombre}</h2>`;
+            juegoDiv.onclick = () => obtenerDetallesJuego(juego.id); // Asignar evento de clic
+            juegosDiv.appendChild(juegoDiv);
+        });
 }
 
 // Función para obtener los detalles del juego
@@ -68,6 +68,7 @@ function obtenerDetallesJuego(juegoId) {
             // Mostrar los detalles y ocultar la lista
             detallesDiv.style.display = 'block';
             document.getElementById('juegos').style.display = 'none';
+            document.getElementById('form-juego').style.display = 'none';
         })
         .catch(error => console.error('Error al cargar los detalles del juego:', error));
 }
@@ -76,6 +77,7 @@ function obtenerDetallesJuego(juegoId) {
 function mostrarLista() {
     document.getElementById('juegos').style.display = 'block';
     document.getElementById('detalles').style.display = 'none';
+    document.getElementById('form-juego').style.display = 'block';
 }
 
 // Inicializar la lista de juegos al cargar la página
@@ -83,3 +85,46 @@ fetch('/gamestore/backend/juegos.php')
     .then(response => response.json())
     .then(juegos => mostrarListaJuegos(juegos))
     .catch(error => console.error('Error al cargar la lista de juegos:', error));
+
+    document.getElementById('form-juego').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const nombre = document.getElementById('nombreJuego').value;
+        const cat = document.getElementById('catJuego').value;
+    
+        fetch('/gamestore/backend/registrar.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nombre: nombre, cat: cat })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('mensaje').innerText = 'Juego añadido exitosamente.';
+                document.getElementById('form-juego').reset();  // Esto funcionará si el ID es de un formulario
+    
+                // Actualizar la lista de juegos
+                fetch('/gamestore/backend/juegos.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        const juegosDiv = document.getElementById('juegos');
+                        juegosDiv.innerHTML = ''; // Limpiar juegos previos antes de agregar nuevos
+                        data.forEach(juego => {
+                            const juegoDiv = document.createElement('div');
+                            juegoDiv.innerHTML = `<h2 class="juego" data-id="${juego.id}" onclick="obtenerDetallesJuego(${juego.id})">${juego.nombre}</h2>`;
+                            juegosDiv.appendChild(juegoDiv);
+                        });
+                    })
+                    .catch(error => console.error('Error al cargar los datos:', error));
+            } else {
+                document.getElementById('mensaje').innerText = 'Error al añadir el juego: ' + (data.message || 'Error desconocido.');
+            }
+        })
+        .catch(error => {
+            document.getElementById('mensaje').innerText = 'Error al procesar la solicitud: ' + error.message;
+        });
+    });
+    
+    
