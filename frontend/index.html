@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Game Store</title>
-    </head>
-    <body>
-        <script src="main.js"></script>
-        <h1>Game Store</h1>
-        <div id="juegos"></div>
-        <div id="detalles" style="display: none;"></div>    
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Store</title>
+</head>
+<body>
+    <h1>Game Store</h1>
+    <div id="formulario">
+        <h2>Registrar juego</h2>
+        <form action="" method="post" id="form-juego">
+            <label for="nombreJuego">Nombre: </label><input type="text" name="nombreJuego" id="nombreJuego" required>
+            <label for="catJuego">Categoria: </label><input type="text" name="catJuego" id="catJuego" required>
+            <input type="submit" value="Registrar">
+        </form>
+        <p id="mensaje"></p>
+    </div>
+    <div id="juegos"></div>
+    <div id="detalles" style="display: none;"></div>    
+    <script src="main.js"></script>
+</body>
 </html>
