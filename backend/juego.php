@@ -1,6 +1,9 @@
 <?php 
 include_once 'db.php'; // Incluir archivo de conexión a la base de datos
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1); // Mostrar errores para depuración
+
 if (isset($_GET['id'])) {
     $juegoId = intval($_GET['id']); // Obtiene el ID del juego
 
@@ -27,9 +30,13 @@ if (isset($_GET['id'])) {
     $comentarios = $stmtComentarios->fetchAll(PDO::FETCH_ASSOC); // Obtiene todos los comentarios
 
     header('Content-Type: application/json');
-    
+
     // Agregar los comentarios al array de respuesta
     $juego['comentarios'] = array_column($comentarios, 'comentario'); // Obtiene solo el campo comentario
+    
+    // Puedes usar var_dump para depuración
+    // var_dump($juego);
+
     echo json_encode($juego); // Devuelve el juego y sus comentarios en formato JSON
 } else {
     // Manejo de error si no se proporciona un ID

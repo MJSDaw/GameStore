@@ -1,4 +1,5 @@
 <?php 
+
     include_once 'db.php';
 
     $query = 'select id, nombre from juegos';
