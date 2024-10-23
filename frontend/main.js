@@ -23,61 +23,12 @@ fetch('/gamestore/backend/juegos.php')
         });
 }
 
-// Función para obtener los detalles del juego
-function obtenerDetallesJuego(juegoId) {
-    fetch(`/gamestore/backend/juego.php?id=${juegoId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la red');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const detallesDiv = document.getElementById('detalles');
-            detallesDiv.innerHTML = ''; // Limpiar contenido previo
-
-            if (data.error) {
-                detallesDiv.innerHTML = `<p>${data.error}</p>`;
-                return;
-            }
-
-            // Mostrar nombre y género del juego
-            const juegoDiv = document.createElement('div');
-            juegoDiv.innerHTML = `<h2>${data.nombre}</h2><p>Género: ${data.genero}</p><p>Puntuación Media: ${data.puntuacion_media || 'N/A'}</p>`;
-            detallesDiv.appendChild(juegoDiv);
-
-            // Crear contenedor para los comentarios
-            const comentariosDiv = document.createElement('div');
-            comentariosDiv.innerHTML = '<h3>Comentarios:</h3>';
-            detallesDiv.appendChild(comentariosDiv);
-
-            // Mostrar comentarios
-            data.comentarios.forEach(comentario => {
-                const comentarioDiv = document.createElement('div');
-                comentarioDiv.innerText = comentario;
-                comentarioDiv.className = 'comentario';
-                comentariosDiv.appendChild(comentarioDiv);
-            });
-
-            // Botón para volver a la lista de juegos
-            const volverBtn = document.createElement('button');
-            volverBtn.innerText = 'Volver a la lista de juegos';
-            volverBtn.onclick = mostrarLista; // Asigna la función para mostrar la lista de juegos
-            detallesDiv.appendChild(volverBtn);
-
-            // Mostrar los detalles y ocultar la lista
-            detallesDiv.style.display = 'block';
-            document.getElementById('juegos').style.display = 'none';
-            document.getElementById('form-juego').style.display = 'none';
-        })
-        .catch(error => console.error('Error al cargar los detalles del juego:', error));
-}
-
 // Función para mostrar nuevamente la lista de juegos
 function mostrarLista() {
     document.getElementById('juegos').style.display = 'block';
     document.getElementById('detalles').style.display = 'none';
     document.getElementById('form-juego').style.display = 'block';
+    document.getElementById('div-form-comentario').style.display = 'none';
 }
 
 // Inicializar la lista de juegos al cargar la página
@@ -238,31 +189,36 @@ fetch('/gamestore/backend/juegos.php')
         
     }
     
-    
-    
     function obtenerComentarios(juegoId) {
         fetch(`/gamestore/backend/comentarios.php?id=${juegoId}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data); // Añadir un log para ver qué se recibe
-            const comentariosDiv = document.querySelector('#detalles div h3').parentElement;
-
-            comentariosDiv.innerHTML = '<h3>Comentarios:</h3>'; // Limpiar comentarios existentes
-
-            // Verifica si 'comentarios' existe en la respuesta
-            if (Array.isArray(data.comentarios)) {
-                data.comentarios.forEach(comentario => {
-                    const comentarioDiv = document.createElement('div');
-                    comentarioDiv.innerText = comentario;
-                    comentarioDiv.className = 'comentario';
-                    comentariosDiv.appendChild(comentarioDiv);
-                });
-            } else {
-                console.error('No hay comentarios en la respuesta', data);
-                comentariosDiv.innerHTML += '<p>No se encontraron comentarios.</p>';
-            }
-        })
-        .catch(error => console.error('Error al cargar los comentarios:', error));
-
+            .then(response => response.json())
+            .then(data => {
+                const comentariosDiv = document.querySelector('#detalles div h3').parentElement;
+    
+                // Limpiar solo los comentarios existentes, pero no el encabezado
+                const comentariosExistentes = comentariosDiv.querySelectorAll('.comentario');
+                comentariosExistentes.forEach(comentario => comentario.remove());
+    
+                // Verifica si 'comentarios' existe en la respuesta
+                if (Array.isArray(data.comentarios) && data.comentarios.length > 0) {
+                    data.comentarios.forEach(comentario => {
+                        const comentarioDiv = document.createElement('div');
+                        comentarioDiv.className = 'comentario';
+    
+                        // Mostrar solo el texto del comentario
+                        comentarioDiv.innerHTML = `
+                            ${comentario.Comentario}
+                        `;
+                        comentariosDiv.appendChild(comentarioDiv);
+                    });
+                } else {
+                    console.error('No hay comentarios en la respuesta', data);
+                    comentariosDiv.innerHTML += '<p>No se encontraron comentarios.</p>';
+                }
+            })
+            .catch(error => console.error('Error al cargar los comentarios:', error));
     }
+    
+    
+    
     
