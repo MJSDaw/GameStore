@@ -18,6 +18,17 @@
     </div>
     <div id="juegos"></div>
     <div id="detalles" style="display: none;"></div>    
+    <div id="div-form-comentario" style="display: none;">
+        <h3>Deja un comentario:</h3>
+        <form id="form-comentario">
+            <label for="puntuacionComentario">Puntuación:</label>
+            <input type="number" id="puntuacionComentario" min="1" max="5" required>
+            <label for="comentarioTexto">Comentario:</label>
+            <textarea id="comentarioTexto" required></textarea>
+            <input type="submit" value="Enviar Comentario">
+        </form>
+        <p id="mensajeComentario"></p>
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
